@@ -5,6 +5,9 @@ REPONAME = $(shell echo $(REPO) | sed -E 's_.+:([a-zA-Z0-9_\-]+)/([a-zA-Z0-9_\-]
 install link:
 	@npm $@
 
+clean:
+	rm -rf node_modules/ specs/client.bundle.js
+
 lint:
 	@$(BIN)/jshint *.js
 
