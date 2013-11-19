@@ -37,7 +37,7 @@ Controller.prototype = {
    * @param {Callback} cb
    */
   start: function(data, cb) {
-    window.addeventlistener('popstate', this.onpopstate);
+    window.addEventListener('popstate', this.onpopstate);
     this.process(null, cb);
   },
 
@@ -46,6 +46,7 @@ Controller.prototype = {
    */
   stop: function() {
     window.removeEventListener('popstate', this.onPopState);
+    React.unmountAndReleaseReactRootNode
   },
 
   /**

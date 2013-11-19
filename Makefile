@@ -8,8 +8,19 @@ install link:
 lint:
 	@$(BIN)/jshint *.js
 
-test::
-	@$(BIN)/mocha -R spec specs/*.js
+test:: test-server test-client-headless
+
+test-client:: specs/client.bundle.js
+	@open specs/index.html
+
+test-client-headless:: specs/client.bundle.js
+	@$(BIN)/mocha-phantomjs ./specs/index.html
+
+test-server::
+	@$(BIN)/mocha -R spec specs/server.js
+
+specs/client.bundle.js: specs/client.js ./index.js ./router.js
+	@$(BIN)/browserify $< > $@
 
 release-patch: test lint
 	@$(call release,patch)

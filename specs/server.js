@@ -14,7 +14,7 @@ var AboutPage = React.createClass({
   }
 });
 
-describe('react-app-controller', function() {
+describe('react-app-controller on server', function() {
 
   var controller;
 
@@ -27,7 +27,7 @@ describe('react-app-controller', function() {
 
   it('renders markup of matched component', function(done) {
     controller.generateMarkup('/about', function(err, markup) {
-      assert.ok(!err);
+      assert.ok(!err, err);
       assert.ok(/AboutPage/.exec(markup));
       done();
     });
