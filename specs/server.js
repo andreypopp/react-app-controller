@@ -16,15 +16,27 @@ var AboutPage = React.createClass({
 
 describe('react-app-controller', function() {
 
-  it('renders markup of matched component', function(done) {
-    var controller = createController({
+  var controller;
+
+  beforeEach(function() {
+    controller = createController({
       '/': MainPage,
       '/about': AboutPage
     });
+  });
 
+  it('renders markup of matched component', function(done) {
     controller.generateMarkup('/about', function(err, markup) {
       assert.ok(!err);
       assert.ok(/AboutPage/.exec(markup));
+      done();
+    });
+  });
+
+  it('returns NotFoundError if no match found for a request', function(done) {
+    controller.generateMarkup('/someurl', function(err, markup) {
+      assert.ok(err);
+      assert.ok(err instanceof createController.NotFoundError);
       done();
     });
   });
