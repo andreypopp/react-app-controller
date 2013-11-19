@@ -1,0 +1,31 @@
+{
+  "name": "react-app-controller",
+  "version": "0.0.0",
+  "description": "React application controller",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha -R spec specs/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "andreypopp/react-app-controller"
+  },
+  "keywords": [
+    "react",
+    "controller",
+    "history",
+    "pushState"
+  ],
+  "author": "Andrey Popp <8mayday@gmail.com>",
+  "license": "MIT",
+  "readmeFilename": "README.md",
+  "devDependencies": {
+    "semver": "~2.2.1",
+    "jshint": "~2.3.0",
+    "mocha": "~1.14.0",
+    "react-tools": "~0.5.1"
+  },
+  "dependencies": {
+    "url-pattern": "~0.2.1"
+  }
+}
