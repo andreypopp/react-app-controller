@@ -5,9 +5,9 @@
  */
 "use strict";
 
-var qs            = require('querystring');
-var React         = require('react-tools/build/modules/React');
-var createRouter  = require('./router');
+var qs                    = require('querystring');
+var React                 = require('react-tools/build/modules/React');
+var createRouter          = require('./router');
 
 function Controller(routes, opts) {
   opts = opts || {};
@@ -263,7 +263,7 @@ function createRequestFromURL(url, data) {
 function createRequestFromLocation(loc, data) {
   return {
     path: loc.pathname,
-    query: qs.parse(loc.search.slice(1)),
+    query: loc.search ? qs.parse(loc.search.slice(1)) : null,
     data: data
   };
 }
@@ -283,4 +283,6 @@ module.exports.createRequestFromURL = createRequestFromURL;
 module.exports.createRequestFromLocation = createRequestFromLocation;
 module.exports.createRouter = createRouter;
 module.exports.createURL = createURL;
+module.exports.renderComponent = renderComponent;
+module.exports.renderComponentToString = renderComponentToString;
 module.exports.NotFoundError = NotFoundError;
