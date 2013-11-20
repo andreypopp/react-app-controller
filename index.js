@@ -50,9 +50,8 @@ Controller.prototype = {
         cb ? cb(err) : throwAsync(err);
       if (this.opts.started) this.opts.started.call(this);
       if (cb) cb(err, controller);
+      window.addEventListener('popstate', this.onPopState);
     }.bind(this));
-
-    window.addEventListener('popstate', this.onPopState);
   },
 
   /**
