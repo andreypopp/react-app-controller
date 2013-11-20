@@ -37,8 +37,13 @@ Controller.prototype = {
    * @param {Callback} cb
    */
   start: function(data, cb) {
-    window.addEventListener('popstate', this.onpopstate);
-    this.process(null, cb);
+    window.addEventListener('popstate', this.onPopState);
+    this.process(null, function(err, controller) {
+      if (err)
+        cb ? cb(err) : throwAsync(err);
+      if (this.opts.started) this.opts.started.call(this);
+      if (cb) cb(err, controller);
+    }.bind(this));
   },
 
   /**
@@ -46,7 +51,8 @@ Controller.prototype = {
    */
   stop: function() {
     window.removeEventListener('popstate', this.onPopState);
-    React.unmountAndReleaseReactRootNode
+    var mountPoint = this.getMountPoint();
+    React.unmountAndReleaseReactRootNode(mountPoint);
   },
 
   /**
@@ -92,9 +98,25 @@ Controller.prototype = {
     if (isString(request))
       request = createRequestFromURL(request);
     var component = this.createComponent(request);
-    if (!component)
+    if (!component) {
       return cb(new NotFoundError(request.path));
+    }
     this.renderComponentToString(component, cb);
+  },
+
+  /**
+   * Get mount point
+   *
+   * @private
+   */
+  getMountPoint: function() {
+    if (this.opts.mountPoint) {
+      return typeof this.opts.mountPoint === 'function' ?
+        this.opts.mountPoint.call(this) :
+        this.opts.mountPoint;
+    } else {
+      return document.body;
+    }
   },
 
   /**
@@ -104,13 +126,13 @@ Controller.prototype = {
    */
   process: function(request, cb) {
     request = request || createRequestFromLocation(window.location);
-    cb = cb || function(err) { throwAsync(err); };
+    cb = cb || function(err) { if (err) throwAsync(err); };
 
     var component = this.createComponent(request);
     if (!component)
       return cb(new NotFoundError(request.path));
 
-    var mountPoint = this.opts.mountPoint || document.body;
+    var mountPoint = this.getMountPoint();
 
     this.renderComponent(component, mountPoint, function(err, component) {
       if (err)
@@ -218,11 +240,12 @@ function renderComponentToString(component, cb) {
  */
 function NotFoundError(url) {
   Error.call(this, 'not found: ' + url);
-  this.name = 'NotFoundError';
   this.url = url;
-  this.isNotFound = true;
 }
 NotFoundError.prototype = new Error();
+NotFoundError.prototype.constructor = NotFoundError;
+NotFoundError.prototype.name = 'NotFoundError';
+NotFoundError.prototype.isNotFoundError = true;
 
 function createURL(request) {
   var url = request.path;
