@@ -37,13 +37,22 @@ Controller.prototype = {
    * @param {Callback} cb
    */
   start: function(data, cb) {
-    window.addEventListener('popstate', this.onPopState);
-    this.process(null, function(err, controller) {
+    if (cb === undefined && typeof data === 'function') {
+      cb = data;
+      data = undefined;
+    }
+
+    var request = createRequestFromLocation(window.location);
+    request.data = data;
+
+    this.process(request, function(err, controller) {
       if (err)
         cb ? cb(err) : throwAsync(err);
       if (this.opts.started) this.opts.started.call(this);
       if (cb) cb(err, controller);
     }.bind(this));
+
+    window.addEventListener('popstate', this.onPopState);
   },
 
   /**
@@ -101,7 +110,7 @@ Controller.prototype = {
     if (!component) {
       return cb(new NotFoundError(request.path));
     }
-    this.renderComponentToString(component, cb);
+    this.renderComponentToString(component, request, cb);
   },
 
   /**
@@ -134,7 +143,7 @@ Controller.prototype = {
 
     var mountPoint = this.getMountPoint();
 
-    this.renderComponent(component, mountPoint, function(err, component) {
+    this.renderComponent(component, mountPoint, request, function(err, component) {
       if (err)
         return cb(err);
 
@@ -217,7 +226,7 @@ function renderComponentAsync(component, element, cb) {
   cb(null, component);
 }
 
-function renderComponent(component, element, cb) {
+function renderComponent(component, element, request, cb) {
   var doc = element.ownerDocument;
 
   if (doc.readyState === 'interactive' || doc.readyState === 'complete') {
@@ -229,8 +238,10 @@ function renderComponent(component, element, cb) {
   }
 }
 
-function renderComponentToString(component, cb) {
-  React.renderComponentToString(component, cb.bind(null, null));
+function renderComponentToString(component, request, cb) {
+  React.renderComponentToString(component, function(markup) {
+    cb(null, {markup: markup});
+  });
 }
 
 /**
