@@ -34,7 +34,7 @@ describe('react-app-controller on client', function() {
 
   it('throws NotFoundError if no match found for a request', function(done) {
 
-    controller.start(null, function(err, controller) {
+    controller.start(function(err, controller) {
       assert.ok(err);
       assert.ok(err instanceof createController.NotFoundError);
       done();

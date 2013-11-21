@@ -28,7 +28,7 @@ describe('react-app-controller on server', function() {
   it('renders markup of matched component', function(done) {
     controller.generateMarkup('/about', function(err, markup) {
       assert.ok(!err, err);
-      assert.ok(/AboutPage/.exec(markup));
+      assert.ok(/AboutPage/.exec(markup.markup));
       done();
     });
   });
