@@ -20,6 +20,10 @@ browser according to `window.location` and History API:
     }
 
     var controller = createController(routes, {
+      // optional, callback which will be executed once the controller started
+      // its operation
+      started: function() { ... },
+
       // optional, the DOM element to mount component to (document.body is used
       // by default).
       mountPoint: document.body,
@@ -30,10 +34,10 @@ browser according to `window.location` and History API:
 
       // advanced, optional, function to render component into specified DOM
       // element
-      renderComponent: function(component, element, cb) { ... },
+      renderComponent: function(component, element, request, cb) { ... },
 
       // advanced, optional, function to render component into markup
-      renderComponentToString: function(component, cb) { ... }
+      renderComponentToString: function(component, request, cb) { ... }
     });
 
     // this will start listening for 'popstate' event and will mount the
@@ -54,10 +58,12 @@ The same controller can be used to pre-generate UI markup on server:
 
     var createController = require('react-app-controller');
 
-    var controller = createController({
+    var routes = {
       '/': MainPage,
       '/about': AboutPage
-    });
+    }
+
+    var controller = createController(routes);
 
     controller.generateMarkup('/about', function(err, markup) {
       // serve markup to a client
