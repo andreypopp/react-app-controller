@@ -15,7 +15,11 @@ var request               = require('./request');
 var ControllerInterface = {
 
   getInitialState: function() {
-    return {request: null};
+    var req = this.props.request;
+    return {
+      request: req,
+      page: this.createPageForRequest(req)
+    };
   },
 
   componentDidMount: function() {
@@ -26,23 +30,26 @@ var ControllerInterface = {
     window.removeEventListener('popstate', this.onPopState);
   },
 
-  getCurrentRequest: function() {
-    return this.state.request || this.props.request;
-  },
-
-  renderPage: function() {
-    var req = this.getCurrentRequest();
+  createPageForRequest: function(req) {
     var match = this.router.match(req.path);
 
     if (!match) {
       throw new NotFoundError(req.path);
     }
 
-    return match.handler({req: req});
+    return match.handler({request: req});
   },
 
   process: function(req, cb) {
-    this.setState({request: request.normalizeRequest(req)}, cb);
+    req = request.normalizeRequest(req);
+
+    if (request.isEqual(this.state.request, req))
+      return;
+
+    this.setState({
+      request: req,
+      page: this.createPageForRequest(req)
+    }, cb);
   },
 
   /**
@@ -99,7 +106,10 @@ var ControllerRenderingInterface = {
       component = this({request: request.normalizeRequest(req)});
       component = React.renderComponent(component, element);
     } catch(err) {
-      return cb && cb(err);
+      if (cb)
+        return cb(err)
+      else
+        throw err;
     }
 
     cb && cb(null, component);
@@ -114,7 +124,7 @@ var ControllerRenderingInterface = {
     var component = this({request: request.normalizeRequest(req)});
     try {
       React.renderComponentToString(component, function(markup) {
-        cb(null, {markup: markup});
+        cb(null, {markup: markup, request: req});
       });
     } catch (err) {
       cb(err);
@@ -123,7 +133,7 @@ var ControllerRenderingInterface = {
 };
 
 function defaultRender() {
-  return React.DOM.div(null, this.renderPage());
+  return React.DOM.div(null, this.state.page);
 }
 
 /**

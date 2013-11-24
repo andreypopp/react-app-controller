@@ -47,11 +47,36 @@ function normalizeRequest(req) {
     req = createRequestFromURL(req);
   } else if (!req) {
     req = createRequestFromLocation(window.location);
+  } else if (req && !req.path) {
+    var data = req;
+    req = createRequestFromLocation(window.location);
+    for (var k in data)
+      if (k !== 'path' && k !== 'query')
+        req[k] = data[k];
   }
   return req;
 }
 
+function isEqual(a, b) {
+  if (a.path !== b.path)
+    return false;
+
+  if (a.query !== b.query)
+    return false;
+
+  for (var k in a.query)
+    if (a.query[k] !== b.query[k])
+      return false;
+
+  for (var k in b.query)
+    if (a.query[k] !== b.query[k])
+      return false;
+
+  return true;
+}
+
 module.exports = {
+  isEqual: isEqual,
   normalizeRequest: normalizeRequest,
   createRequestFromURL: createRequestFromURL,
   createRequestFromLocation: createRequestFromLocation,
