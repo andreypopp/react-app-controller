@@ -98,13 +98,18 @@ var ControllerRenderingInterface = {
       component = this({request: request.normalizeRequest(req)});
       component = React.renderComponent(component, element);
     } catch(err) {
-      return cb(err);
+      return cb && cb(err);
     }
 
-    cb(null, component);
+    cb && cb(null, component);
   },
 
   renderToString: function(req, cb) {
+    invariant(
+      typeof cb === 'function',
+      'provide callback as a last argument to renderToString(...)'
+    );
+
     var component = this({request: request.normalizeRequest(req)});
     try {
       React.renderComponentToString(component, function(markup) {
