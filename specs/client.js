@@ -41,6 +41,11 @@ describe('react-app-controller on client', function() {
       assert.ok(!err);
       assert.ok(document.querySelector('.MainPage'));
       assert.ok(!document.querySelector('.AboutPage'));
+
+      assert.ok(controller.state.page);
+      assert.ok(controller.state.request);
+      assert.equal(controller.state.request.path, '/');
+
       done();
     });
   });
@@ -50,6 +55,11 @@ describe('react-app-controller on client', function() {
       assert.ok(!err);
       assert.ok(!document.querySelector('.MainPage'));
       assert.ok(document.querySelector('.AboutPage'));
+
+      assert.ok(controller.state.page);
+      assert.ok(controller.state.request);
+      assert.equal(controller.state.request.path, '/about');
+
       done();
     });
   });
@@ -59,9 +69,16 @@ describe('react-app-controller on client', function() {
       assert.ok(!err);
       assert.ok(document.querySelector('.MainPage'));
       assert.ok(!document.querySelector('.AboutPage'));
+      assert.ok(controller.state.page);
+      assert.ok(controller.state.request);
+      assert.equal(controller.state.request.path, '/');
+
       controller.navigate('/about', function() {
         assert.ok(!document.querySelector('.MainPage'));
         assert.ok(document.querySelector('.AboutPage'));
+        assert.ok(controller.state.page);
+        assert.ok(controller.state.request);
+        assert.equal(controller.state.request.path, '/about');
         done();
       });
     });
