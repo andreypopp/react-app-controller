@@ -14,43 +14,21 @@ browser according to `window.location` and History API:
 
     var createController = require('react-app-controller');
 
-    var routes = {
-      '/': MainPage,
-      '/about': AboutPage
-    }
-
-    var controller = createController(routes, {
-      // optional, callback which will be executed once the controller started
-      // its operation
-      started: function() { ... },
-
-      // optional, the DOM element to mount component to (document.body is used
-      // by default).
-      mountPoint: document.body,
-
-      // optional, options object which will be passed to a created component as
-      // 'options' prop
-      options: ...,
-
-      // advanced, optional, function to render component into specified DOM
-      // element
-      renderComponent: function(component, element, request, cb) { ... },
-
-      // advanced, optional, function to render component into markup
-      renderComponentToString: function(component, request, cb) { ... }
+    var controller = createController({
+      routes: {
+        '/': MainPage,
+        '/about': AboutPage
+      }
     });
 
     // this will start listening for 'popstate' event and will mount the
-    controller.start();
+    controller.render(document.body);
 
     // .navigate(url) can be used to navigate to a specified URL
     controller.navigate('/about');
 
     // .navigateQuery(obj) can be used to update query string values
-    controller.navigate({search: 'term'});
-
-    // call .stop() if you want to stop listening for 'popstate'
-    controller.stop();
+    controller.navigateQuery({search: 'term'});
 
 ## Usage on server
 
@@ -58,13 +36,13 @@ The same controller can be used to pre-generate UI markup on server:
 
     var createController = require('react-app-controller');
 
-    var routes = {
-      '/': MainPage,
-      '/about': AboutPage
-    }
+    var controller = createController({
+      routes: {
+        '/': MainPage,
+        '/about': AboutPage
+      }
+    });
 
-    var controller = createController(routes);
-
-    controller.generateMarkup('/about', function(err, markup) {
+    controller.renderToString('/about', function(err, markup) {
       // serve markup to a client
     });

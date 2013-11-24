@@ -20,10 +20,10 @@ test-client-headless:: specs/client.bundle.js
 	@$(BIN)/mocha-phantomjs ./specs/index.html
 
 test-server::
-	@$(BIN)/mocha -R spec specs/server.js
+	@$(BIN)/mocha -b -R spec specs/server.js
 
 specs/client.bundle.js: specs/client.js ./index.js ./router.js
-	@$(BIN)/browserify $< > $@
+	@$(BIN)/browserify --debug $< > $@
 
 release-patch: test lint
 	@$(call release,patch)

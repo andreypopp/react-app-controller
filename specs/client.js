@@ -1,42 +1,76 @@
 require('es5-shim');
 
-var assert            = require('assert'),
-    createController  = require('../index'),
-    React             = require('react-tools/build/modules/React');
+var assert            = require('assert');
+var React             = require('react-tools/build/modules/React');
+var createController  = require('../index');
+var NotFoundError     = require('../not-found-error');
 
 var MainPage = React.createClass({
   render: function() {
-    return React.DOM.div(null, 'MainPage');
+    return React.DOM.div({className: 'MainPage'}, 'MainPage');
   }
 });
 
 var AboutPage = React.createClass({
   render: function() {
-    return React.DOM.div(null, 'AboutPage');
+    return React.DOM.div({className: 'AboutPage'}, 'AboutPage');
   }
 });
 
 describe('react-app-controller on client', function() {
 
   var controller;
+  var root = document.getElementById('root');
 
   beforeEach(function() {
     controller = createController({
-      '/': MainPage,
-      '/about': AboutPage
-    }, {mountPoint: document.getElementById('root')});
+      routes: {
+        '/': MainPage,
+        '/about': AboutPage
+      }
+    });
   });
 
   afterEach(function() {
-    controller.stop();
     controller = undefined;
+    React.unmountComponentAtNode(controller);
+  });
+
+  it('renders /', function(done) {
+    controller.render(root, '/', function(err, controller) {
+      assert.ok(!err);
+      assert.ok(document.querySelector('.MainPage'));
+      assert.ok(!document.querySelector('.AboutPage'));
+      done();
+    });
+  });
+
+  it('renders /about', function(done) {
+    controller.render(root, '/about', function(err, controller) {
+      assert.ok(!err);
+      assert.ok(!document.querySelector('.MainPage'));
+      assert.ok(document.querySelector('.AboutPage'));
+      done();
+    });
+  });
+
+  it('navigates from one page to another', function(done) {
+    controller.render(root, '/', function(err, controller) {
+      assert.ok(!err);
+      assert.ok(document.querySelector('.MainPage'));
+      assert.ok(!document.querySelector('.AboutPage'));
+      controller.navigate('/about', function() {
+        assert.ok(!document.querySelector('.MainPage'));
+        assert.ok(document.querySelector('.AboutPage'));
+        done();
+      });
+    });
   });
 
   it('throws NotFoundError if no match found for a request', function(done) {
-
-    controller.start(function(err, controller) {
+    controller.render(root, '/not-found', function(err, controller) {
       assert.ok(err);
-      assert.ok(err instanceof createController.NotFoundError);
+      assert.ok(err instanceof NotFoundError);
       done();
     });
   });
