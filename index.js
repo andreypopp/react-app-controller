@@ -62,6 +62,7 @@ var ControllerInterface = {
    * @param {Callback} cb
    */
   navigate: function(req, cb) {
+    req = request.normalizeRequest(req);
     var url = request.createURLFromRequest(req);
     window.history.pushState(null, '', url);
     this.process(req, cb);
