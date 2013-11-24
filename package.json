@@ -30,6 +30,6 @@
     "phantomjs": "~1.9.2-3"
   },
   "dependencies": {
-    "url-pattern": "~0.2.1"
+    "url-pattern": "~0.2.2"
   }
 }
