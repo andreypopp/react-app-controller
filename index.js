@@ -30,6 +30,12 @@ var ControllerInterface = {
     window.removeEventListener('popstate', this.onPopState);
   },
 
+  /**
+   * Create a page for a specified request
+   *
+   * @param {Request} req
+   * @private
+   */
   createPageForRequest: function(req) {
     var match = this.router.match(req.path);
 
@@ -40,6 +46,14 @@ var ControllerInterface = {
     return match.handler({request: req});
   },
 
+  /**
+   * Process request
+   *
+   * @param {Request} req
+   * @param {Callback?} cb
+   *
+   * @private
+   */
   process: function(req, cb) {
     req = request.normalizeRequest(req);
 
@@ -94,6 +108,18 @@ var ControllerInterface = {
 
 var ControllerRenderingInterface = {
 
+  /**
+   * Render controller component into DOM element for specified request.
+   *
+   * If not request is specified than it will be constructed from
+   * window.location.
+   *
+   * If no callback is specified and error is occurred then it will be thrown.
+   *
+   * @param {DOMElement} element
+   * @param {Request?} req
+   * @paran {Callback?}
+   */
   render: function(element, req, cb) {
     var component;
 
@@ -115,6 +141,12 @@ var ControllerRenderingInterface = {
     cb && cb(null, component);
   },
 
+  /**
+   * Render controller for specified request into markup string
+   *
+   * @param {Request} req
+   * @param {Callback} cb callback receives object {markup: ..., request: ...}
+   */
   renderToString: function(req, cb) {
     invariant(
       typeof cb === 'function',
@@ -132,6 +164,12 @@ var ControllerRenderingInterface = {
   }
 };
 
+/**
+ * Default render impl. for ControllerInterface.
+ *
+ * Will be mixed in by createController function to workaround
+ * ReactCompositeComponent policy which disallows render() method overrides.
+ */
 function defaultRender() {
   return React.DOM.div(null, this.state.page);
 }
@@ -139,11 +177,18 @@ function defaultRender() {
 /**
  * Create controller
  *
- * @param {Object} routes Mapping from URL patterns to React components
+ * @param {Object} spec React component specification extended with `routes`
+ *                      declarations
  */
 function createController(spec, iface, renderingIface) {
+  spec = spec || {};
   iface = iface || ControllerInterface;
   renderingIface = renderingIface || ControllerRenderingInterface;
+
+  invariant(
+    spec.routes || spec.router,
+    'missing `routes` declaration for a react-app controller'
+  );
 
   if (!spec.router && spec.routes)
     spec.router = createRouter(spec.routes);
