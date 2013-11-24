@@ -41,6 +41,10 @@ var ControllerInterface = {
     return match.handler({req: req});
   },
 
+  process: function(req, cb) {
+    this.setState({request: request.normalizeRequest(req)}, cb);
+  },
+
   /**
    * Handle 'popstate' event
    *
@@ -48,7 +52,7 @@ var ControllerInterface = {
    */
   onPopState: function(e) {
     e.preventDefault();
-    this.setState({request: request.normalizeRequest(req)});
+    this.process();
   },
 
   /**
@@ -60,7 +64,7 @@ var ControllerInterface = {
   navigate: function(req, cb) {
     var url = request.createURLFromRequest(req);
     window.history.pushState(null, '', url);
-    this.setState({request: request.normalizeRequest(req)}, cb);
+    this.process(req, cb);
   },
 
   /**
