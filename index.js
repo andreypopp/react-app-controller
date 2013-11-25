@@ -43,7 +43,7 @@ var ControllerInterface = {
       throw new NotFoundError(req.path);
     }
 
-    return match.handler({request: req});
+    return match.handler(utils.extend({request: req}, match.params));
   },
 
   /**

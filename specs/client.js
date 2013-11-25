@@ -22,73 +22,101 @@ describe('react-app-controller on client', function() {
   var controller;
   var root = document.getElementById('root');
 
-  beforeEach(function() {
-    controller = createController({
-      routes: {
-        '/': MainPage,
-        '/about': AboutPage
-      }
-    });
-  });
-
   afterEach(function() {
-    controller = undefined;
-    React.unmountComponentAtNode(controller);
+    if (controller !== undefined) {
+      React.unmountComponentAtNode(controller);
+      controller = undefined;
+    }
   });
 
-  it('renders /', function(done) {
-    controller.render(root, '/', function(err, controller) {
-      assert.ok(!err);
-      assert.ok(document.querySelector('.MainPage'));
-      assert.ok(!document.querySelector('.AboutPage'));
+  it('passes params extracted from URL into page component as props', function(done) {
+    controller = createController({
+      routes: {'/:param1/:param2': MainPage}
+    });
+
+    controller.render(root, '/abc/def', function(err, controller) {
+      if (err) return done(err);
 
       assert.ok(controller.state.page);
-      assert.ok(controller.state.request);
-      assert.equal(controller.state.request.path, '/');
-
+      assert.equal(controller.state.page.props.param1, 'abc');
+      assert.equal(controller.state.page.props.param2, 'def');
       done();
     });
   });
 
-  it('renders /about', function(done) {
-    controller.render(root, '/about', function(err, controller) {
-      assert.ok(!err);
-      assert.ok(!document.querySelector('.MainPage'));
-      assert.ok(document.querySelector('.AboutPage'));
+  describe('initial rendering and transitions', function() {
 
-      assert.ok(controller.state.page);
-      assert.ok(controller.state.request);
-      assert.equal(controller.state.request.path, '/about');
+    var controller;
+    var root = document.getElementById('root');
 
-      done();
+    beforeEach(function() {
+      controller = createController({
+        routes: {
+          '/': MainPage,
+          '/about': AboutPage
+        }
+      });
     });
-  });
 
-  it('navigates from one page to another', function(done) {
-    controller.render(root, '/', function(err, controller) {
-      assert.ok(!err);
-      assert.ok(document.querySelector('.MainPage'));
-      assert.ok(!document.querySelector('.AboutPage'));
-      assert.ok(controller.state.page);
-      assert.ok(controller.state.request);
-      assert.equal(controller.state.request.path, '/');
+    afterEach(function() {
+      controller = undefined;
+      React.unmountComponentAtNode(controller);
+    });
 
-      controller.navigate('/about', function() {
-        assert.ok(!document.querySelector('.MainPage'));
-        assert.ok(document.querySelector('.AboutPage'));
+    it('renders /', function(done) {
+      controller.render(root, '/', function(err, controller) {
+        assert.ok(!err);
+        assert.ok(document.querySelector('.MainPage'));
+        assert.ok(!document.querySelector('.AboutPage'));
+
         assert.ok(controller.state.page);
         assert.ok(controller.state.request);
-        assert.equal(controller.state.request.path, '/about');
+        assert.equal(controller.state.request.path, '/');
+
         done();
       });
     });
-  });
 
-  it('throws NotFoundError if no match found for a request', function(done) {
-    controller.render(root, '/not-found', function(err, controller) {
-      assert.ok(err);
-      assert.ok(err instanceof NotFoundError);
-      done();
+    it('renders /about', function(done) {
+      controller.render(root, '/about', function(err, controller) {
+        assert.ok(!err);
+        assert.ok(!document.querySelector('.MainPage'));
+        assert.ok(document.querySelector('.AboutPage'));
+
+        assert.ok(controller.state.page);
+        assert.ok(controller.state.request);
+        assert.equal(controller.state.request.path, '/about');
+
+        done();
+      });
+    });
+
+    it('navigates from one page to another', function(done) {
+      controller.render(root, '/', function(err, controller) {
+        assert.ok(!err);
+        assert.ok(document.querySelector('.MainPage'));
+        assert.ok(!document.querySelector('.AboutPage'));
+        assert.ok(controller.state.page);
+        assert.ok(controller.state.request);
+        assert.equal(controller.state.request.path, '/');
+
+        controller.navigate('/about', function() {
+          assert.ok(!document.querySelector('.MainPage'));
+          assert.ok(document.querySelector('.AboutPage'));
+          assert.ok(controller.state.page);
+          assert.ok(controller.state.request);
+          assert.equal(controller.state.request.path, '/about');
+          done();
+        });
+      });
+    });
+
+    it('throws NotFoundError if no match found for a request', function(done) {
+      controller.render(root, '/not-found', function(err, controller) {
+        assert.ok(err);
+        assert.ok(err instanceof NotFoundError);
+        done();
+      });
     });
   });
 
