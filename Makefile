@@ -11,7 +11,7 @@ clean:
 lint:
 	@$(BIN)/jshint *.js
 
-test:: test-server test-client-headless
+test:: test-server test-client-headless test-server-alternative test-client-alternative-headless
 
 test-client:: specs/client.bundle.js
 	@open specs/index.html
@@ -22,7 +22,19 @@ test-client-headless:: specs/client.bundle.js
 test-server::
 	@$(BIN)/mocha -b -R spec specs/server.js specs/common.js
 
-specs/client.bundle.js: specs/client.js ./index.js ./router.js
+specs/client.bundle.js: specs/client.js ./*.js
+	@$(BIN)/browserify --debug $< > $@
+
+test-client-alternative:: specs/client-alternative.bundle.js
+	@open specs/index-alternative.html
+
+test-client-alternative-headless:: specs/client-alternative.bundle.js
+	@$(BIN)/mocha-phantomjs ./specs/index-alternative.html
+
+test-server-alternative:
+	@$(BIN)/mocha -b -R spec specs/server-alternative.js
+
+specs/client-alternative.bundle.js: specs/client-alternative.js ./*.js
 	@$(BIN)/browserify --debug $< > $@
 
 release-patch: test lint
