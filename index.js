@@ -22,6 +22,16 @@ var ControllerInterface = {
     };
   },
 
+  /**
+   * Default render implementation.
+   *
+   * Will be mixed in by createController function to workaround
+   * ReactCompositeComponent policy which disallows render() method overrides.
+   */
+  defaultRender: function() {
+    return React.DOM.div(null, this.state.page);
+  },
+
   componentDidMount: function() {
     window.addEventListener('popstate', this.onPopState);
   },
@@ -165,16 +175,6 @@ var ControllerRenderingInterface = {
 };
 
 /**
- * Default render impl. for ControllerInterface.
- *
- * Will be mixed in by createController function to workaround
- * ReactCompositeComponent policy which disallows render() method overrides.
- */
-function defaultRender() {
-  return React.DOM.div(null, this.state.page);
-}
-
-/**
  * Create controller
  *
  * @param {Object} spec React component specification extended with `routes`
@@ -194,7 +194,7 @@ function createController(spec, iface, renderingIface) {
     spec.router = createRouter(spec.routes);
 
   if (!spec.render)
-    spec.render = defaultRender;
+    spec.render = iface.defaultRender;
 
   spec.mixins = spec.mixins || [];
   spec.mixins.unshift(iface);
