@@ -5,8 +5,8 @@
  */
 "use strict";
 
-var React                 = require('react-tools/build/modules/React');
-var invariant             = require('react-tools/build/modules/invariant');
+var React                 = require('react');
+var invariant             = require('react/lib/invariant');
 var createRouter          = require('./router');
 var NotFoundError         = require('./not-found-error');
 var utils                 = require('./utils');

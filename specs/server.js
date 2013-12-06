@@ -1,5 +1,5 @@
 var assert = require('assert');
-var React = require('react-tools/build/modules/React');
+var React = require('react');
 var createController = require('../index');
 var NotFoundError = require('../not-found-error');
 
