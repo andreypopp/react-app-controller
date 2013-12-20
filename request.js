@@ -64,11 +64,13 @@ function isEqual(a, b) {
   if (a.query !== b.query)
     return false;
 
-  for (var k in a.query)
+  var k;
+
+  for (k in a.query)
     if (a.query[k] !== b.query[k])
       return false;
 
-  for (var k in b.query)
+  for (k in b.query)
     if (a.query[k] !== b.query[k])
       return false;
 
