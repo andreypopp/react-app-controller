@@ -44,6 +44,26 @@ describe('react-app-controller on client', function() {
     });
   });
 
+  it('does not render twice', function(done) {
+    var counter = 0;
+
+    var Page = React.createClass({
+      render: function() {
+        counter += 1;
+        return React.DOM.div(null, 'hello');
+      }
+    });
+
+    controller = createController({
+      routes: {'/': Page}
+    });
+
+    controller.render(root, '/', function(err, controller) {
+      assert.equal(counter, 1);
+      done();
+    });
+  });
+
   describe('initial rendering and transitions', function() {
 
     var controller;
@@ -118,6 +138,7 @@ describe('react-app-controller on client', function() {
         done();
       });
     });
+
   });
 
 });
