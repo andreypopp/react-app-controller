@@ -175,7 +175,7 @@ var ControllerRenderingInterface = {
     var component = this({request: request.normalizeRequest(req)});
     try {
       React.renderComponentToString(component, function(markup) {
-        cb(null, {markup: markup, request: req});
+        cb(null, {markup: markup, request: req, controller: component});
       });
     } catch (err) {
       cb(err);
