@@ -121,6 +121,7 @@ describe('react-app-controller on client', function() {
         assert.equal(controller.state.request.path, '/');
 
         controller.navigate('/about', function() {
+          assert.ok(!err);
           assert.ok(!document.querySelector('.MainPage'));
           assert.ok(document.querySelector('.AboutPage'));
           assert.ok(controller.state.page);
@@ -135,6 +136,22 @@ describe('react-app-controller on client', function() {
       controller.render(root, '/not-found', function(err, controller) {
         assert.ok(err);
         assert.ok(err instanceof NotFoundError);
+        done();
+      });
+    });
+
+    it('allows rendering custom UI on NotFoundError', function(done) {
+      controller = createController({
+        routes: {},
+        renderNotFound: function() {
+          return React.DOM.div({className: 'NotFound'}, '404');
+        }
+      });
+
+      controller.render(root, '/about', function(err, controller) {
+        assert.ok(!err, err);
+        assert.ok(document.querySelector('.NotFound'));
+        assert.ok(controller.state.page === null);
         done();
       });
     });

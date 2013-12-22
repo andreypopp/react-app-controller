@@ -8,17 +8,18 @@
 var React                 = require('react');
 var invariant             = require('react/lib/invariant');
 var createRouter          = require('./router');
-var NotFoundError         = require('./not-found-error');
 var utils                 = require('./utils');
 var request               = require('./request');
+var NotFoundError         = require('./not-found-error');
 
 var ControllerInterface = {
 
   getInitialState: function() {
     var req = this.props.request;
+    var page = this.createPageForRequest(req);
     return {
       request: req,
-      page: this.createPageForRequest(req)
+      page: page
     };
   },
 
@@ -29,7 +30,13 @@ var ControllerInterface = {
    * ReactCompositeComponent policy which disallows render() method overrides.
    */
   defaultRender: function() {
-    return React.DOM.div(null, this.state.page);
+    if (this.state.page !== null) {
+      return React.DOM.div(null, this.state.page);
+    } else if (typeof this.renderNotFound === 'function') {
+      return this.renderNotFound();
+    } else {
+      throw new NotFoundError(this.state.request.path);
+    }
   },
 
   componentDidMount: function() {
@@ -50,7 +57,7 @@ var ControllerInterface = {
     var match = this.router.match(req.path);
 
     if (!match) {
-      throw new NotFoundError(req.path);
+      return null;
     }
 
     return match.handler(utils.extend({request: req}, match.params));
@@ -70,9 +77,11 @@ var ControllerInterface = {
     if (request.isEqual(this.state.request, req))
       return;
 
+    var page = this.createPageForRequest(req);
+
     this.setState({
       request: req,
-      page: this.createPageForRequest(req)
+      page: page
     }, cb);
   },
 

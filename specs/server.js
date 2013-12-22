@@ -43,4 +43,19 @@ describe('react-app-controller on server', function() {
       done();
     });
   });
+
+  it('allows rendering custom UI on NotFoundError', function(done) {
+    controller = createController({
+      routes: {},
+      renderNotFound: function() {
+        return React.DOM.div(null, '404');
+      }
+    });
+
+    controller.renderToString('/about', function(err, markup) {
+      assert.ok(!err, err);
+      assert.ok(/404/.exec(markup.markup));
+      done();
+    });
+  });
 });
