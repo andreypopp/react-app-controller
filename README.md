@@ -12,7 +12,16 @@ window.location and History API.
 You can use `react-app-controller` to control how components are rendered in
 browser according to `window.location` and History API:
 
+    var React = require('react');
     var createController = require('react-app-controller');
+
+    var MainPage = React.createClass({
+      ...
+    });
+
+    var AboutPage = React.createClass({
+      ...
+    });
 
     var controller = createController({
       routes: {
@@ -68,6 +77,29 @@ asynchronously:
       // serve markup to a client
     });
 
+## Handling 404 NOT FOUND error
+
+To provide 404 NOT FOUND error handler you should define `renderNotFound()`
+method:
+
+    var controller = createController({
+      routes: {
+        ...
+      },
+
+      renderNotFound: function() {
+        return (
+          <div className="NotFound">
+            Sorry, no item could be found for a specified request
+          </div>
+        );
+      }
+    });
+
+When no matched route found for specified URL controller checks if it has
+`renderNotFound()` method defined and calls it, otherwise it throw
+`NotFoundError`.
+
 ## Overriding .render(...) method
 
 Controllers are React components but they have `.render()` method
@@ -80,6 +112,9 @@ implemented by default. It looks like this:
 Note the `this.state.page`, it is the currently active component according to
 `window.location` and routing table (`routes` attribute you passed as a part of
 a controller specification in `createController`).
+
+In case there were no matches for a current URL then `this.state.page` will be
+`null`. You should handle this case according your needs.
 
 You can override the `.render()` by own implementation, just pass it as a part
 of controller specification into `createController`.
