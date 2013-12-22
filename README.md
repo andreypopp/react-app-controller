@@ -1,16 +1,26 @@
 # react-app-controller
 
-React application controller to manage top-level React components according to
-window.location and History API.
+Application controller component for [React][1].
+
+It keeps track of `window.location` (via History API) and renders UI according
+to its routes table. It can be used both on client and server.
+
+[1]: https://facebook.github.io/react
 
 ## Installation
 
+Install via npm:
+
     % npm install react-app-controller
+
+You certainly will need to install React itself:
+
+    % npm install react
 
 ## Client side usage
 
 You can use `react-app-controller` to control how components are rendered in
-browser according to `window.location` and History API:
+browser according to `window.location`:
 
     var React = require('react');
     var createController = require('react-app-controller');
@@ -30,8 +40,8 @@ browser according to `window.location` and History API:
       }
     });
 
-Now `controller` is essentially a React component (one you would usually create
-with `React.createClass(...)` function).
+Instantiated `controller` is essentially a React component (one you would
+usually create with `React.createClass(...)` function).
 
 Instead of instantiating this component directly we use `.render()` method which
 takes DOM element as an argument. This function does the same as
@@ -46,20 +56,23 @@ takes DOM element as an argument. This function does the same as
 Now `controller` is fully functional, it listens to `popstate` event and react
 accordingly.
 
-There are also few useful methods — `.navigate()` and `.navigateQuery()`:
+There are also few useful methods to trigger transition to a different route.
 
-    // .navigate(url) can be used to navigate to a specified URL
+Method `.navigate(url)` can be used to navigate to a specified URL:
+
     controller.navigate('/about');
 
-    // .navigateQuery(obj) can be used to update query string values
+Another method `.navigateQuery(obj)` can be used to update just the current
+query string values:
+
     controller.navigateQuery({search: 'term'});
 
-Both these methods also call `window.pushState` so browser location will be
-updated accordingly.
+Both these methods call `window.pushState(..)` internally so browser location
+will be updated accordingly.
 
 ## Server side usage
 
-The same controller can be used to pre-generate UI markup on server:
+The same controller can be used to pre-generate UI markup on a server:
 
     var createController = require('react-app-controller');
 
@@ -70,17 +83,17 @@ The same controller can be used to pre-generate UI markup on server:
       }
     });
 
-Method `.renderToString` takes a string argument and produces markup
+Method `.renderToString(url, cb)` takes a URL and produces corresponding markup
 asynchronously:
 
     controller.renderToString('/about', function(err, markup) {
       // serve markup to a client
     });
 
-## Handling 404 NOT FOUND error
+## Handling NotFoundError
 
-To provide 404 NOT FOUND error handler you should define `renderNotFound()`
-method:
+When no route is matched for a specified URL you can define
+`renderNotFound()` method to generate UI for this case:
 
     var controller = createController({
       routes: {
@@ -90,17 +103,16 @@ method:
       renderNotFound: function() {
         return (
           <div className="NotFound">
-            Sorry, no item could be found for a specified request
+            Sorry, no item could be found for a specified request.
           </div>
         );
       }
     });
 
-When no matched route found for specified URL controller checks if it has
-`renderNotFound()` method defined and calls it, otherwise it throw
-`NotFoundError`.
+If no `renderNotFound()` was defined and condition occurs then `NotFoundError`
+will be thrown.
 
-## Overriding .render(...) method
+## Overriding .render() method
 
 Controllers are React components but they have `.render()` method
 implemented by default. It looks like this:
