@@ -17,7 +17,7 @@ You certainly will need to install React itself:
 
     % npm install react
 
-## Client side usage
+## Creating a controller
 
 You can use `react-app-controller` to control how components are rendered in
 browser according to `window.location`:
@@ -43,12 +43,11 @@ browser according to `window.location`:
 Instantiated `controller` is essentially a React component (one you would
 usually create with `React.createClass(...)` function).
 
-Instead of instantiating this component directly we use `.render()` method which
-takes DOM element as an argument. This function does the same as
-`React.renderComponent(...)` but provides asynchronous API on top of it.
+## Client side usage
 
-    // this will start listening for 'popstate' event and will mount the
-    // controller's
+When we are ready to start our controller in a browser we use its `.render()`
+static method instead of `React.renderComponent`.
+
     controller.render(document.body, function(err, controller) {
       // controller instantiated and rendered into DOM
     });
@@ -56,7 +55,7 @@ takes DOM element as an argument. This function does the same as
 Now `controller` is fully functional, it listens to `popstate` event and react
 accordingly.
 
-There are also few useful methods to trigger transition to a different route.
+### Transitions to different routes
 
 Method `.navigate(url)` can be used to navigate to a specified URL:
 
@@ -69,6 +68,9 @@ query string values:
 
 Both these methods call `window.pushState(..)` internally so browser location
 will be updated accordingly.
+
+You probably would want to use these methods when some event occurs like
+clicking an anchor element.
 
 ## Server side usage
 
