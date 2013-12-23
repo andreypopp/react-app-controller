@@ -1,7 +1,7 @@
-var assert = require('assert');
-var React = require('react');
-var createController = require('../index');
-var NotFoundError = require('../not-found-error');
+var assert              = require('assert');
+var React               = require('react');
+var createController    = require('../index');
+var NotFoundError       = require('../not-found-error');
 
 var MainPage = React.createClass({
   render: function() {
@@ -10,8 +10,12 @@ var MainPage = React.createClass({
 });
 
 var AboutPage = React.createClass({
+  fetchData: function(req, cb) {
+    cb(null, {msg: 'hello'});
+  },
+
   render: function() {
-    return React.DOM.div(null, 'AboutPage');
+    return React.DOM.div(null, 'AboutPage', this.props.request.data);
   }
 });
 
@@ -32,6 +36,7 @@ describe('react-app-controller on server', function() {
     controller.renderToString('/about', function(err, markup) {
       assert.ok(!err, err);
       assert.ok(/AboutPage/.exec(markup.markup));
+      assert.ok(/hello/.exec(markup.markup));
       done();
     });
   });

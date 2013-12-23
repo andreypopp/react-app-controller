@@ -4,7 +4,6 @@ var createRouter = require('../router');
 
 describe('react-app-controller', function() {
 
-
   it('requires `routes` declaration', function() {
     assert.throws(function() {
       createController({});
