@@ -82,6 +82,7 @@ var RenderingInterface = utils.extend(BaseRenderingInterface, {
 });
 
 function fetchDataForRequest(controller, page, req, cb) {
+  // we got not page or we already have data or page does not want any data
   if (!page || req.data || typeof page.fetchData !== 'function') {
     cb(null, req, page);
   } else {
