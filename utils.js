@@ -9,23 +9,20 @@ function isString(obj) {
   return Object.prototype.toString.call(obj) === '[object String]';
 }
 
-function assign(dst, src) {
-  for (var k in src)
-    dst[k] = src[k];
-  return dst;
-}
-
 function extend(a, b) {
   var result = {};
+  var k;
 
-  assign(result, a);
-  assign(result, b);
+  for (k in a)
+    result[k] = a[k];
+
+  for (k in b)
+    result[k] = b[k];
 
   return result;
 }
 
 module.exports = {
   isString: isString,
-  extend: extend,
-  assign: assign
+  extend: extend
 };
