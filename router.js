@@ -18,6 +18,13 @@ function Router(routes) {
 }
 
 Router.prototype = {
+
+  /**
+   * Register a handler for a specified route
+   *
+   * @param {String} pattern
+   * @param {Object} handler
+   */
   addRoute: function(pattern, handler) {
     this.registered.push({
       pattern: toPattern(pattern),
@@ -26,6 +33,12 @@ Router.prototype = {
     return this;
   },
 
+  /**
+   * Match registered routes against path.
+   *
+   * @param {String} path
+   * @return {Object|undefined}
+   */
   match: function(path) {
     for (var i = 0, length = this.registered.length; i < length; i++) {
       var params = this.registered[i].pattern.match(path);

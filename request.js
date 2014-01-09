@@ -1,3 +1,8 @@
+/**
+ * Request related functions.
+ *
+ * 2013 (c) Andrey Popp <8mayday@gmail.com>
+ */
 "use strict";
 
 var qs    = require('querystring');

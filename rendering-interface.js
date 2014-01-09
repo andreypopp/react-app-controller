@@ -1,3 +1,8 @@
+/**
+ * Rendering interface for application controllers.
+ *
+ * 2013 (c) Andrey Popp <8mayday@gmail.com>
+ */
 "use strict";
 
 var React                 = require('react');

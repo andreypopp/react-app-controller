@@ -1,3 +1,8 @@
+/**
+ * Utilities.
+ *
+ * 2013 (c) Andrey Popp <8mayday@gmail.com>
+ */
 "use strict";
 
 /**
