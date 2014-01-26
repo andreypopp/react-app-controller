@@ -1,11 +1,7 @@
-/**
- * Rendering interface for application controllers.
- *
- * 2013 (c) Andrey Popp <8mayday@gmail.com>
- */
 "use strict";
 
 var React                 = require('react');
+var ReactMount            = require('react/lib/ReactMount');
 var invariant             = require('react/lib/invariant');
 var request               = require('./request');
 
@@ -25,6 +21,10 @@ module.exports = {
    */
   render: function(element, req, cb) {
     var controller;
+
+    if (typeof document !== 'undefined' && document === element) {
+      ReactMount.allowFullPageRender = true;
+    }
 
     if (typeof req === 'function') {
       cb = req;
