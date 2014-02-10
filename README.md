@@ -1,5 +1,9 @@
 # react-app-controller
 
+**DEPRECATION WARNING:** This is not maintained anymore, please use
+[react-router-component](https://github.com/andreypopp/react-router-component)
+instead.
+
 Application controller component for [React][1].
 
 It keeps track of `window.location` (via History API) and renders UI according
